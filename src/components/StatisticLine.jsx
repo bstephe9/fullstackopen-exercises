@@ -1,6 +1,9 @@
 function StatisticLine({ text, value }) {
   return (
-    <div>{text} {value}</div>
+    <tr>
+      <td>{text}</td>
+      <td>{value} {text == "positive" ? "%" : ""}</td>
+    </tr>
   )
 }
 
