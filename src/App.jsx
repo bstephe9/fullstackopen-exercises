@@ -30,7 +30,8 @@ const App = () => {
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <style>{` .anecdote { height: 4rem; overflow-y: auto; } `}</style>
+      <p className="anecdote">{anecdotes[selected]}</p>
       <div>has {votes[selected]} votes</div>
       <button onClick={() => addVote(selected)}>vote</button>
       <button onClick={setRandomAnecdote}>next anecdote</button>
