@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const App = () => {
   const anecdotes = [
@@ -13,6 +13,7 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [mostPopularIndex, setMostPopularIndex] = useState(0)
   const [votes, setVotes] = useState(
     new Array(anecdotes.length).fill(0)
   )
@@ -28,13 +29,26 @@ const App = () => {
     )
   }
 
+  useEffect(() => {
+    onVoteAdded()
+  }, [votes])
+
+  const onVoteAdded = () => {
+    let mostVotesIndex = votes.indexOf(Math.max(...votes))
+    setMostPopularIndex(mostVotesIndex)
+  }
+
   return (
     <div>
       <style>{` .anecdote { height: 4rem; overflow-y: auto; } `}</style>
+      <h1>Anecdote of the day</h1>
       <p className="anecdote">{anecdotes[selected]}</p>
       <div>has {votes[selected]} votes</div>
       <button onClick={() => addVote(selected)}>vote</button>
       <button onClick={setRandomAnecdote}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <div>{anecdotes[mostPopularIndex]}</div>
+      <div>has {votes[mostPopularIndex]} votes</div>
     </div>
   )
 }
