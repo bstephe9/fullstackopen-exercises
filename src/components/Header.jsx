@@ -1,8 +1,6 @@
-import React from 'react'
-
-function Header(props) {
+function Header({ courseName }) {
   return (
-    <h1>{props.course}</h1>
+    <h1>{courseName}</h1>
   )
 }
 
