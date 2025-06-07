@@ -1,9 +1,15 @@
 import './App.css'
+import Note from './components/Note'
 
-function App() {
+function App({ notes }) {
   return (
     <>
-
+      <h1>Notes</h1>
+      <ul>
+        {notes.map(note =>
+          <Note key={note.id} note={note}></Note>
+        )}
+      </ul>
     </>
   )
 }
