@@ -1,11 +1,11 @@
-import React from 'react'
-
-function Total(props) {
-  const exerciseCount = props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises
+function Total({ parts }) {
+  const exerciseCount = parts.reduce(
+    (total, part) => total + part.exercises, 0
+  )
 
   return (
     <>
-      <p>Number of exercises {exerciseCount}</p>
+      <p><b>Number of exercises {exerciseCount}</b></p>
     </>
   )
 }
