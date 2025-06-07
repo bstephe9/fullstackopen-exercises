@@ -5,7 +5,7 @@ function Total({ parts }) {
 
   return (
     <>
-      <p><b>Number of exercises {exerciseCount}</b></p>
+      <p><b>total of {exerciseCount} exercises</b></p>
     </>
   )
 }
