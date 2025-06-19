@@ -1,18 +1,24 @@
 import { useState } from 'react'
+import PeopleDisplay from './components/PeopleDisplay'
+import LabeledInput from './components/LabeledInput'
+import Form from './components/Form'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '555-555-5555' }
+    { name: 'Arto Hellas', number: '555-555-5555' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState('')
+  const [filterString, setFilterString] = useState('')
 
-  const personsToShow = (filter === '')
+  const personsToShow = (filterString === '')
     ? persons
     : persons.filter(person =>
       person.name.toLowerCase()
-        .includes(filter.toLowerCase())
+        .includes(filterString.toLowerCase())
     )
 
   const addPerson = (e) => {
@@ -36,44 +42,19 @@ const App = () => {
   }
 
   return (
-    <div>
+    <>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with:
-        <input
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-        </input>
-      </div>
+      <LabeledInput text="filter shown with:" value={filterString} setValue={setFilterString} />
+
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name:
-          <input
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-        </div>
-        <div>
-          number:
-          <input
-            value={newNumber}
-            onChange={(e) => setNewNumber(e.target.value)}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form handleSubmit={addPerson}>
+        <LabeledInput text="name:" value={newName} setValue={setNewName} />
+        <LabeledInput text="number:" value={newNumber} setValue={setNewNumber} />
+      </Form>
+
       <h2>Numbers</h2>
-      <ul>
-        {personsToShow.map(person =>
-          <li key={person.name}>{person.name} {person.number}</li>
-        )}
-      </ul>
-      <div>debug: {newName}</div>
-    </div>
+      <PeopleDisplay people={personsToShow}></PeopleDisplay>
+    </>
   )
 }
 
