@@ -1,11 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import Note from './components/Note'
+import axios from 'axios'
 
-function App(props) {
-  const [notes, setNotes] = useState(props.notes)
+function App() {
+  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/notes")
+      .then(response => setNotes(response.data))
+  }, [])
 
   const notesToShow = showAll
     ? notes
@@ -23,10 +29,6 @@ function App(props) {
     setNewNote('')
   }
 
-  const handleNoteChange = (e) => {
-    setNewNote(e.target.value)
-  }
-
   return (
     <>
       <h1>Notes</h1>
@@ -42,7 +44,7 @@ function App(props) {
       <form onSubmit={addNote}>
         <input
           value={newNote}
-          onChange={handleNoteChange}
+          onChange={(e) => setNewNote(e.target.value)}
         />
         <button type="submit">save</button>
       </form>
