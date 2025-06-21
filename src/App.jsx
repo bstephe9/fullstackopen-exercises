@@ -21,12 +21,14 @@ function App() {
     event.preventDefault()
     const noteObject = {
       content: newNote,
-      important: Math.random() < 0.5,
-      id: String(notes.length + 1),
+      important: Math.random() < 0.5
     }
 
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+    axios.post('http://localhost:3001/notes', noteObject)
+      .then(response => {
+        setNotes(notes.concat(response.data))
+        setNewNote('')
+      })
   }
 
   return (
