@@ -31,16 +31,24 @@ const App = () => {
       alert("All form values must be filled")
       return
     }
-    const names = persons.map(person => person.name)
-    if (names.includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
-      return
-    }
 
-    const personObject = { name: newName, number: newNumber }
-    numberService.create(personObject).then(returnedNumber => {
-      setPersons(persons.concat(returnedNumber))
-    })
+    const newPerson = { name: newName, number: newNumber }
+    const existingPerson = persons.find(person => person.name === newName)
+
+    if (existingPerson) {
+      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        numberService.update(existingPerson.id, newPerson)
+          .then(returnedNumber => {
+            setPersons(persons.map(person =>
+              person.id === existingPerson.id ? returnedNumber : person
+            ))
+          })
+      }
+    } else {
+      numberService.create(newPerson).then(returnedNumber => {
+        setPersons(persons.concat(returnedNumber))
+      })
+    }
 
     setNewName('')
     setNewNumber('')
