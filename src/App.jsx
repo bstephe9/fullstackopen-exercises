@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import PeopleDisplay from './components/PeopleDisplay'
 import LabeledInput from './components/LabeledInput'
 import Form from './components/Form'
-import axios from 'axios'
+import numberService from './services/numbers'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,11 +11,9 @@ const App = () => {
   const [filterString, setFilterString] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        console.log(response.data)
-      })
+    numberService.getAll().then(initialNumbers => {
+      setPersons(initialNumbers)
+    })
   }, [])
 
   const personsToShow = (filterString === '')
@@ -40,7 +38,10 @@ const App = () => {
     }
 
     const personObject = { name: newName, number: newNumber }
-    setPersons(persons.concat(personObject))
+    numberService.create(personObject).then(returnedNumber => {
+      setPersons(persons.concat(returnedNumber))
+    })
+
     setNewName('')
     setNewNumber('')
   }
