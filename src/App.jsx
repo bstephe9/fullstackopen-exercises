@@ -45,6 +45,10 @@ const App = () => {
               person.id === existingPerson.id ? returnedNumber : person
             ))
           })
+          .catch(error => {
+            setNotificationMessage(`${existingPerson.name} was already removed from the server`)
+            setTimeout(() => setNotificationMessage(null), 5000)
+          })
       }
     } else {
       numberService.create(newPerson).then(returnedNumber => {
