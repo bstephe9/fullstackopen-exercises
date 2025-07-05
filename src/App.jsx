@@ -3,12 +3,14 @@ import PeopleDisplay from './components/PeopleDisplay'
 import LabeledInput from './components/LabeledInput'
 import Form from './components/Form'
 import numberService from './services/numbers'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     numberService.getAll().then(initialNumbers => {
@@ -47,6 +49,8 @@ const App = () => {
     } else {
       numberService.create(newPerson).then(returnedNumber => {
         setPersons(persons.concat(returnedNumber))
+        setNotificationMessage(`Added ${newPerson.name}`)
+        setTimeout(() => setNotificationMessage(null), 5000)
       })
     }
 
@@ -66,6 +70,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}></Notification>
       <LabeledInput text="filter shown with:" value={filterString} setValue={setFilterString} />
 
       <h2>add a new</h2>
