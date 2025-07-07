@@ -1,35 +1,31 @@
-const CountryDisplay = ({ countries }) => {
-  if (countries.length > 10) {
-    return <div>Too many matches, specify another filter</div>
-  } else if (countries.length > 1) {
-    return (
-      <ul>
-        {countries.map(country => <li key={country.cca2}>{country.name.common}</li>)}
-      </ul>
-    )
-  } else if (countries.length == 1) {
-    const country = countries[0]
+import CountryView from "./CountryView"
 
-    return (
-      <div>
-        <h1>{country.name.common}</h1>
-        <div>Capital {country.capital[0]}</div>
-        <div>Area {country.area}</div>
-        <h2>Languages</h2>
-        <ul>
-          {Object.entries(country.languages).map(([code, name]) => (
-            <li key={code}>
-              {name}
-            </li>
-          ))}
-        </ul>
-        <img src={country.flags.png} title={country.flags.alt}></img>
-      </div>
-    )
-  } else {
-    return <div>No countries found</div>
+const CountryDisplay = ({ countries, selectedCountry, handleCountrySelection }) => {
+  if (countries.length > 10) {
+    return <p>Too many matches, specify another filter</p>
+  } else if (countries.length === 0) {
+    return <p>No countries found</p>
+  } else if (countries.length == 1 || selectedCountry) {
+    const countryToShow = selectedCountry || countries[0]
+    return <CountryView country={countryToShow}></CountryView>
   }
 
+  // Display all queried countries otherwise
+  return (
+    <div>
+      <ul>
+        {countries.map(country =>
+          <li key={country.cca2}>{country.name.common}
+            <button
+              style={{ 'marginLeft': '8px' }}
+              onClick={() => handleCountrySelection(country)}
+            >Show
+            </button>
+          </li>
+        )}
+      </ul>
+    </div>
+  )
 }
 
 export default CountryDisplay

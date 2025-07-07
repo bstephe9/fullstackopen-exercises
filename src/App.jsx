@@ -7,15 +7,19 @@ import CountryDisplay from './components/CountryDisplay'
 function App() {
   const [query, setQuery] = useState('')
   const [countries, setCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     async function fetchData() {
       const countryList = await axios.get("https://studies.cs.helsinki.fi/restcountries/api/all")
       setCountries(countryList.data)
-      console.log(countryList.data.slice(0, 3))
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    setSelectedCountry(null)
+  }, [query])
 
   const countriesToShow = (query === "") ? [] : countries.filter(
     country => country.name.common.toLowerCase().includes(query.toLowerCase())
@@ -24,7 +28,11 @@ function App() {
   return (
     <>
       <LabeledInput text="find countries" value={query} setValue={setQuery} />
-      <CountryDisplay countries={countriesToShow}></CountryDisplay>
+      <CountryDisplay
+        countries={countriesToShow}
+        selectedCountry={selectedCountry}
+        handleCountrySelection={(country) => setSelectedCountry(country)}
+      />
     </>
   )
 }
