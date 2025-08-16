@@ -28,6 +28,14 @@ let numbers = [
   },
 ]
 
+app.get("/info", (request, response) => {
+  let response_html = `
+    <p>Phonebook has info for ${numbers.length} people</p>
+    <p>${new Date()}</p>
+  `
+  response.send(response_html)
+})
+
 app.get("/api/persons", (request, response) => {
   response.json(numbers)
 })
