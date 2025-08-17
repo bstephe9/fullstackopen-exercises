@@ -5,6 +5,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+const ID_MIN = 1
+const ID_MAX = 1000000
+
 let numbers = [
   {
     id: "1",
@@ -50,6 +53,32 @@ app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id
   numbers = numbers.filter((number) => id !== number.id)
   response.status(204).end()
+})
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "content missing",
+    })
+  }
+
+  const entry = {
+    id: String(getRandomInt(ID_MIN, ID_MAX)),
+    name: body.name,
+    number: body.number,
+  }
+
+  numbers = numbers.concat(entry)
+
+  response.json(entry)
 })
 
 const PORT = 3001
