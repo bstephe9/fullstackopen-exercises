@@ -70,6 +70,12 @@ app.post("/api/persons", (request, response) => {
     })
   }
 
+  if (numbers.find((entry) => entry.name === body.name)) {
+    return response.status(400).json({
+      error: `name ${body.name} already exists`,
+    })
+  }
+
   const entry = {
     id: String(getRandomInt(ID_MIN, ID_MAX)),
     name: body.name,
