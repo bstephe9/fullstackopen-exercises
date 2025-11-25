@@ -71,6 +71,22 @@ app.post("/api/notes", (request, response) => {
   response.json(note)
 })
 
+app.put("/api/notes/:id", (request, response) => {
+  const id = request.params.id
+  const body = request.body
+
+  const note = notes.find((note) => note.id === id)
+  if (!note) {
+    return response.status(400).json({
+      error: "note not found",
+    })
+  }
+
+  const changedNote = body
+  notes = notes.map((note) => (note.id === id ? changedNote : note))
+  response.json(changedNote)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
