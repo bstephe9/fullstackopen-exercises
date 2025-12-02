@@ -1,58 +1,52 @@
 import express from "express"
 import cors from "cors"
+import supabase from "./database.js"
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-]
-
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>")
 })
 
-app.get("/api/notes", (request, response) => {
+app.get("/api/notes", async (request, response) => {
+  const { data: notes, error } = await supabase.from("notes").select()
+
+  if (error) {
+    console.error("Supabase error:", error)
+    return response.status(500).json({ error: "Failed to fetch notes" })
+  }
+
   response.json(notes)
 })
 
-app.get("/api/notes/:id", (request, response) => {
+app.get("/api/notes/:id", async (request, response) => {
   const id = request.params.id
-  const note = notes.find((note) => note.id === id)
+
+  let { data: notes, error } = await supabase
+    .from("notes")
+    .select()
+    .eq("id", id)
+
+  const note = notes[0]
 
   note ? response.json(note) : response.status(404).end()
 })
 
-app.delete("/api/notes/:id", (request, response) => {
+app.delete("/api/notes/:id", async (request, response) => {
   const id = request.params.id
-  notes = notes.filter((note) => note.id !== id)
+  const { data: notes, error } = await supabase
+    .from("notes")
+    .delete()
+    .eq("id", id)
+    .select()
 
-  response.status(204).end()
+  notes.length > 0 ? response.status(204).end() : response.status(404).end()
 })
 
-const generateId = () => {
-  const maxId =
-    notes.length > 0 ? Math.max(...notes.map((n) => Number(n.id))) : 0
-  return String(maxId + 1)
-}
-
-app.post("/api/notes", (request, response) => {
+app.post("/api/notes", async (request, response) => {
   const body = request.body
 
   if (!body.content) {
@@ -61,34 +55,48 @@ app.post("/api/notes", (request, response) => {
     })
   }
 
-  const note = {
-    content: body.content,
-    important: body.important || false,
-    id: generateId(),
+  const { data: notes, error } = await supabase
+    .from("notes")
+    .insert([
+      {
+        content: body.content,
+        important: body.important || false,
+      },
+    ])
+    .select()
+
+  if (error) {
+    console.error("Supabase error:", error)
+    return response.status(500).json({ error: "Failed to add note" })
   }
 
-  notes = notes.concat(note)
-
-  response.json(note)
+  response.json(notes[0])
 })
 
-app.put("/api/notes/:id", (request, response) => {
+app.put("/api/notes/:id", async (request, response) => {
   const id = request.params.id
   const body = request.body
 
-  const note = notes.find((note) => note.id === id)
-  if (!note) {
+  const { data: notes, error } = await supabase
+    .from("notes")
+    .update({
+      content: body.content,
+      important: body.important || false,
+    })
+    .eq("id", id)
+    .select()
+
+  if (error) {
+    console.error("Supabase error:", error)
     return response.status(400).json({
       error: "note not found",
     })
   }
 
-  const changedNote = body
-  notes = notes.map((note) => (note.id === id ? changedNote : note))
-  response.json(changedNote)
+  response.json(notes[0])
 })
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

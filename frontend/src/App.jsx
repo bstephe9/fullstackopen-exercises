@@ -12,10 +12,12 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    noteService.getAll().then((initialNotes) => setNotes(initialNotes))
+    noteService.getAll().then((initialNotes) => {
+      setNotes(initialNotes)
+    })
   }, [])
 
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important)
+  const notesToShow = showAll ? notes : notes.filter((n) => n.important)
 
   const addNote = (event) => {
     event.preventDefault()

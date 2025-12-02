@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios from "axios"
+
 const baseUrl = `${import.meta.env.VITE_API_URL}/api/notes`
 
 const getAll = async () => {
@@ -16,4 +17,9 @@ const update = async (id, newObject) => {
   return response.data
 }
 
-export default { getAll, create, update }
+const remove = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  return response.data
+}
+
+export default { getAll, create, update, remove }
