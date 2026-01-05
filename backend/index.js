@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import supabase from "./database.js"
+import config from "./utils/config.js"
 
 const app = express()
 
@@ -96,7 +97,6 @@ app.put("/api/notes/:id", async (request, response) => {
   response.json(notes[0])
 })
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })

@@ -1,15 +1,16 @@
 import { createClient } from "@supabase/supabase-js"
+import config from "./utils/config.js"
 
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY
+const supabaseUrl = config.SUPABASE_URL
+const supabaseKey = config.SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 signInWithEnvCredentials(supabase)
 
 async function signInWithEnvCredentials(supabase) {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: process.env.SUPABASE_AUTH_EMAIL,
-      password: process.env.SUPABASE_AUTH_PASSWORD,
+      email: config.SUPABASE_AUTH_EMAIL,
+      password: config.SUPABASE_AUTH_PASSWORD,
     })
 
     if (error) throw error
