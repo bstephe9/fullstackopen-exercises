@@ -3,18 +3,17 @@ import { Router } from "express"
 
 const notesRouter = Router()
 
-notesRouter.get("/", async (request, response) => {
+notesRouter.get("/", async (request, response, next) => {
   const { data: notes, error } = await supabase.from("notes").select()
 
   if (error) {
-    console.error("Supabase error:", error)
-    return response.status(500).json({ error: "Failed to fetch notes" })
+    return next(error)
   }
 
   response.json(notes)
 })
 
-notesRouter.get("/:id", async (request, response) => {
+notesRouter.get("/:id", async (request, response, next) => {
   const id = request.params.id
 
   let { data: notes, error } = await supabase
@@ -22,12 +21,16 @@ notesRouter.get("/:id", async (request, response) => {
     .select()
     .eq("id", id)
 
+  if (error) {
+    return next(error)
+  }
+
   const note = notes[0]
 
   note ? response.json(note) : response.status(404).end()
 })
 
-notesRouter.post("/", async (request, response) => {
+notesRouter.post("/", async (request, response, next) => {
   const body = request.body
 
   if (!body.content) {
@@ -47,20 +50,23 @@ notesRouter.post("/", async (request, response) => {
     .select()
 
   if (error) {
-    console.error("Supabase error:", error)
-    return response.status(500).json({ error: "Failed to add note" })
+    return next(error)
   }
 
   response.json(notes[0])
 })
 
-notesRouter.delete("/:id", async (request, response) => {
+notesRouter.delete("/:id", async (request, response, next) => {
   const id = request.params.id
   const { data: notes, error } = await supabase
     .from("notes")
     .delete()
     .eq("id", id)
     .select()
+
+  if (error) {
+    return next(error)
+  }
 
   notes.length > 0 ? response.status(204).end() : response.status(404).end()
 })
@@ -79,10 +85,7 @@ notesRouter.put("/:id", async (request, response) => {
     .select()
 
   if (error) {
-    console.error("Supabase error:", error)
-    return response.status(400).json({
-      error: "note not found",
-    })
+    return next(error)
   }
 
   response.json(notes[0])
